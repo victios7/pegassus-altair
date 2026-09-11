@@ -1,0 +1,772 @@
+; =============================================================================
+; Pegstd 1.0 — pure Pegassus IR standard library
+; No external binaries. No exec. No files.
+; ABI: args/results in locals 240-249; temps 250-255. App code: use 0-229.
+; Include:
+;   jmp main
+;   include pegstd.ir
+;   lab main
+; =============================================================================
+
+; ----- abs / min / max / clamp / sign -----
+lab std_abs
+load 240
+dup
+push 0
+lt
+jz std_abs_ok
+neg
+lab std_abs_ok
+ret
+
+lab std_min
+load 240
+load 241
+gt
+jz std_min_a
+load 241
+ret
+lab std_min_a
+load 240
+ret
+
+lab std_max
+load 240
+load 241
+lt
+jz std_max_a
+load 241
+ret
+lab std_max_a
+load 240
+ret
+
+lab std_clamp
+load 240
+load 241
+lt
+jz std_cl_hi
+load 241
+ret
+lab std_cl_hi
+load 240
+load 242
+gt
+jz std_cl_ok
+load 242
+ret
+lab std_cl_ok
+load 240
+ret
+
+lab std_sign
+load 240
+push 0
+gt
+jz std_sg_np
+push 1
+ret
+lab std_sg_np
+load 240
+push 0
+eq
+jz std_sg_neg
+push 0
+ret
+lab std_sg_neg
+push 0
+push 1
+sub
+ret
+
+; ----- predicates -----
+lab std_is_zero
+load 240
+push 0
+eq
+ret
+
+lab std_is_pos
+load 240
+push 0
+gt
+ret
+
+lab std_is_neg
+load 240
+push 0
+lt
+ret
+
+lab std_is_even
+load 240
+push 2
+mod
+push 0
+eq
+ret
+
+lab std_is_odd
+load 240
+push 2
+mod
+push 0
+ne
+ret
+
+lab std_between
+load 240
+load 241
+lt
+jnz std_bet_no
+load 240
+load 242
+gt
+jnz std_bet_no
+push 1
+ret
+lab std_bet_no
+push 0
+ret
+
+lab std_cmp3
+load 240
+load 241
+lt
+jnz std_c3_lt
+load 240
+load 241
+gt
+jnz std_c3_gt
+push 0
+ret
+lab std_c3_lt
+push 0
+push 1
+sub
+ret
+lab std_c3_gt
+push 1
+ret
+
+; ----- pow / fact / gcd / lcm -----
+lab std_pow
+push 1
+store 250
+lab std_pow_lp
+load 241
+push 0
+le
+jnz std_pow_dn
+load 250
+load 240
+mul
+store 250
+load 241
+push 1
+sub
+store 241
+jmp std_pow_lp
+lab std_pow_dn
+load 250
+ret
+
+lab std_fact
+push 1
+store 250
+load 240
+store 251
+lab std_fact_lp
+load 251
+push 1
+le
+jnz std_fact_dn
+load 250
+load 251
+mul
+store 250
+load 251
+push 1
+sub
+store 251
+jmp std_fact_lp
+lab std_fact_dn
+load 250
+ret
+
+lab std_gcd
+lab std_gcd_lp
+load 241
+push 0
+eq
+jnz std_gcd_dn
+load 240
+load 241
+mod
+store 250
+load 241
+store 240
+load 250
+store 241
+jmp std_gcd_lp
+lab std_gcd_dn
+load 240
+dup
+push 0
+lt
+jz std_gcd_pos
+neg
+lab std_gcd_pos
+ret
+
+lab std_lcm
+load 240
+store 251
+load 241
+store 252
+call std_gcd
+store 250
+load 250
+push 0
+eq
+jnz std_lcm_z
+load 251
+load 252
+mul
+load 250
+div
+dup
+push 0
+lt
+jz std_lcm_ok
+neg
+lab std_lcm_ok
+ret
+lab std_lcm_z
+push 0
+ret
+
+; ----- isqrt fib sum -----
+lab std_isqrt
+load 240
+push 0
+le
+jnz std_isqrt_z
+push 0
+store 250
+push 1
+store 251
+lab std_isqrt_lp
+load 251
+load 251
+mul
+load 240
+gt
+jnz std_isqrt_dn
+load 251
+store 250
+load 251
+push 1
+add
+store 251
+jmp std_isqrt_lp
+lab std_isqrt_dn
+load 250
+ret
+lab std_isqrt_z
+push 0
+ret
+
+lab std_fib
+load 240
+push 0
+le
+jnz std_fib_z
+load 240
+push 1
+eq
+jnz std_fib_1
+push 0
+store 250
+push 1
+store 251
+push 2
+store 252
+lab std_fib_lp
+load 252
+load 240
+gt
+jnz std_fib_dn
+load 250
+load 251
+add
+store 253
+load 251
+store 250
+load 253
+store 251
+load 252
+push 1
+add
+store 252
+jmp std_fib_lp
+lab std_fib_dn
+load 251
+ret
+lab std_fib_z
+push 0
+ret
+lab std_fib_1
+push 1
+ret
+
+lab std_sum_n
+load 240
+dup
+push 1
+add
+mul
+push 2
+div
+ret
+
+lab std_sum_range
+load 240
+store 250
+push 0
+store 251
+lab std_sum_lp
+load 250
+load 241
+gt
+jnz std_sum_dn
+load 251
+load 250
+add
+store 251
+load 250
+push 1
+add
+store 250
+jmp std_sum_lp
+lab std_sum_dn
+load 251
+ret
+
+; ----- divmod log2 next_pow2 -----
+lab std_divmod
+load 241
+push 0
+eq
+jnz std_dm_err
+load 240
+load 241
+div
+store 250
+load 240
+load 241
+mod
+store 242
+load 250
+ret
+lab std_dm_err
+push 0
+store 242
+push 0
+ret
+
+lab std_log2
+load 240
+push 1
+lt
+jnz std_log2_z
+push 0
+store 250
+load 240
+store 251
+lab std_log2_lp
+load 251
+push 1
+le
+jnz std_log2_dn
+load 251
+push 1
+shr
+store 251
+load 250
+push 1
+add
+store 250
+jmp std_log2_lp
+lab std_log2_dn
+load 250
+ret
+lab std_log2_z
+push 0
+ret
+
+lab std_next_pow2
+load 240
+push 1
+le
+jnz std_np2_1
+push 1
+store 250
+lab std_np2_lp
+load 250
+load 240
+ge
+jnz std_np2_dn
+load 250
+push 1
+shl
+store 250
+jmp std_np2_lp
+lab std_np2_dn
+load 250
+ret
+lab std_np2_1
+push 1
+ret
+
+; ----- bits -----
+lab std_popcnt
+load 240
+store 250
+push 0
+store 251
+lab std_pc_lp
+load 250
+push 0
+eq
+jnz std_pc_dn
+load 250
+push 1
+and
+load 251
+add
+store 251
+load 250
+push 1
+shr
+store 250
+jmp std_pc_lp
+lab std_pc_dn
+load 251
+ret
+
+lab std_parity
+call std_popcnt
+push 2
+mod
+ret
+
+lab std_bit_test
+load 240
+load 241
+shr
+push 1
+and
+ret
+
+lab std_bit_set
+load 240
+push 1
+load 241
+shl
+or
+ret
+
+lab std_bit_toggle
+load 240
+push 1
+load 241
+shl
+xor
+ret
+
+lab std_bit_clear
+load 240
+store 250
+call std_bit_test
+push 1
+eq
+jz std_bc_skip
+load 250
+push 1
+load 241
+shl
+xor
+ret
+lab std_bc_skip
+load 250
+ret
+
+; ----- random LCG state in 249 -----
+lab std_rand_seed
+load 240
+store 249
+push 0
+ret
+
+lab std_rand
+load 249
+push 1103515245
+mul
+push 12345
+add
+store 249
+load 249
+push 0
+ge
+jz std_rand_pos
+load 249
+neg
+store 249
+lab std_rand_pos
+load 249
+push 32768
+mod
+ret
+
+lab std_rand_range
+load 241
+load 240
+sub
+push 1
+add
+store 250
+call std_rand
+load 250
+mod
+load 240
+add
+ret
+
+; ----- strings (stack ids in 240/241) -----
+lab std_strlen
+load 240
+strlen
+ret
+
+lab std_streq
+load 240
+load 241
+strcmp
+push 0
+eq
+ret
+
+lab std_strcat
+load 240
+load 241
+strcat
+ret
+
+lab std_itoa
+load 240
+dup
+push 0
+eq
+jz std_itoa_nz
+pop
+pushs "0"
+ret
+lab std_itoa_nz
+pushs ""
+store 250
+load 240
+push 0
+lt
+jz std_itoa_pos
+neg
+store 240
+push 1
+store 251
+jmp std_itoa_lp
+lab std_itoa_pos
+push 0
+store 251
+lab std_itoa_lp
+load 240
+push 0
+le
+jnz std_itoa_dn
+load 240
+push 10
+mod
+store 252
+load 252
+push 0
+eq
+jz std_id1
+pushs "0"
+jmp std_idc
+lab std_id1
+load 252
+push 1
+eq
+jz std_id2
+pushs "1"
+jmp std_idc
+lab std_id2
+load 252
+push 2
+eq
+jz std_id3
+pushs "2"
+jmp std_idc
+lab std_id3
+load 252
+push 3
+eq
+jz std_id4
+pushs "3"
+jmp std_idc
+lab std_id4
+load 252
+push 4
+eq
+jz std_id5
+pushs "4"
+jmp std_idc
+lab std_id5
+load 252
+push 5
+eq
+jz std_id6
+pushs "5"
+jmp std_idc
+lab std_id6
+load 252
+push 6
+eq
+jz std_id7
+pushs "6"
+jmp std_idc
+lab std_id7
+load 252
+push 7
+eq
+jz std_id8
+pushs "7"
+jmp std_idc
+lab std_id8
+load 252
+push 8
+eq
+jz std_id9
+pushs "8"
+jmp std_idc
+lab std_id9
+pushs "9"
+lab std_idc
+load 250
+strcat
+store 250
+load 240
+load 252
+sub
+push 10
+div
+store 240
+jmp std_itoa_lp
+lab std_itoa_dn
+load 251
+push 1
+eq
+jz std_itoa_ret
+pushs "-"
+load 250
+strcat
+ret
+lab std_itoa_ret
+load 250
+ret
+
+; ----- extras -----
+lab std_median3
+load 240
+store 250
+load 241
+store 251
+load 242
+store 252
+load 250
+load 251
+gt
+jz std_m1
+load 250
+store 253
+load 251
+store 250
+load 253
+store 251
+lab std_m1
+load 251
+load 252
+gt
+jz std_m2
+load 251
+store 253
+load 252
+store 251
+load 253
+store 252
+lab std_m2
+load 250
+load 251
+gt
+jz std_m3
+load 250
+store 253
+load 251
+store 250
+load 253
+store 251
+lab std_m3
+load 251
+ret
+
+lab std_lerp
+load 241
+load 240
+sub
+load 242
+mul
+push 100
+div
+load 240
+add
+ret
+
+lab std_percent
+load 241
+push 0
+eq
+jnz std_pct_z
+load 240
+push 100
+mul
+load 241
+div
+ret
+lab std_pct_z
+push 0
+ret
+
+lab std_inc
+load 240
+push 1
+add
+store 240
+load 240
+ret
+
+lab std_dec
+load 240
+push 1
+sub
+store 240
+load 240
+ret
