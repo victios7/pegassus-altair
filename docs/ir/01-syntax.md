@@ -1,57 +1,121 @@
-# IR syntax / Sintaxis IR
+# IR syntax (detailed) / Sintaxis IR (detallada)
 
 ## English
 
-### Forms
+### File structure
+An `.ir` file is a sequence of lines. Empty lines are ignored. Comments start with `;` and run to end of line.
+
 ```text
-const NAME 123
-lab name
-push 10
-pushs "text"
-load 0
+; sum 1..n style program
+const N 10
+push 0
 store 0
-add
-jmp name
-jz name
-jnz name
-call name
-ret
+push 1
+store 1
+lab loop
+  load 0
+  load 1
+  add
+  store 0
+  load 1
+  push 1
+  add
+  store 1
+  load 1
+  push N
+  le
+  jnz loop
+load 0
 print
-prints
-end
 halt
-include other.ir
 ```
 
-Comments: `;` to end of line.
+### Tokens
+- **Opcodes**: lowercase words (`push`, `load`, `add`, …)
+- **Integers**: decimal or `0x` hex in many contexts
+- **Names**: label and const identifiers
+- **Strings**: `"text"` for `pushs` and some ops
 
-`end` and `halt` stop the program. Prefer `jmp main` before libraries.
+### const
+```text
+const LIMIT 100
+push LIMIT      ; same as push 100 after assembly
+```
+
+### lab
+```text
+lab start
+lab loop1
+```
+Labels mark bytecode addresses. Forward references are allowed (two-pass assembler).
+
+### include
+```text
+include pegstd.ir
+include libs/math.ir
+```
+See `docs/libs/03-include.md`.
+
+### Formatting
+`pegassus fmt file.ir` rewrites indentation (`lab`/`const` at column 0, ops indented).
 
 ---
 
 ## Español
 
-### Formas
+### Estructura del archivo
+Un `.ir` es una secuencia de líneas. Las vacías se ignoran. Comentarios con `;` hasta fin de línea.
+
 ```text
-const NAME 123
-lab name
-push 10
-pushs "text"
-load 0
+; programa estilo suma 1..n
+const N 10
+push 0
 store 0
-add
-jmp name
-jz name
-jnz name
-call name
-ret
+push 1
+store 1
+lab loop
+  load 0
+  load 1
+  add
+  store 0
+  load 1
+  push 1
+  add
+  store 1
+  load 1
+  push N
+  le
+  jnz loop
+load 0
 print
-prints
-end
 halt
-include other.ir
 ```
 
-Comentarios: `;` hasta fin de línea.
+### Tokens
+- **Opcodes**: palabras en minúsculas
+- **Enteros**: decimal o `0x` en muchos contextos
+- **Nombres**: labels y const
+- **Strings**: `"texto"` para `pushs` y algunas ops
 
-`end` y `halt` terminan. Prefiere `jmp main` antes de librerías.
+### const
+```text
+const LIMIT 100
+push LIMIT
+```
+
+### lab
+```text
+lab start
+lab loop1
+```
+Las labels marcan direcciones de bytecode. Referencias hacia adelante: ensamblador de dos pasadas.
+
+### include
+```text
+include pegstd.ir
+include libs/math.ir
+```
+Ver `docs/libs/03-include.md`.
+
+### Formato
+`pegassus fmt file.ir` reindenta (`lab`/`const` al inicio, ops indentadas).

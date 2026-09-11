@@ -1,29 +1,31 @@
-# Compilation pipeline / Pipeline de compilación
+# Pipeline / Pipeline
 
 ## English
 
 ```text
-.ir source
-   → load_source (+ include expansion)
-   → assemble (2 passes: labs, then emit)
-   → optimize (level-dependent; each pass can rollback)
-   → verify_bytecode
-   → run interpreter  OR  emit asm/native subset
+load_source
+  → expand include
+  → assemble pass1 (labs, consts)
+  → assemble pass2 (emit ops)
+  → optimize (optional)
+  → verify_bytecode
+  → run | dis | asm | build
 ```
 
-Cache: `.pegc` stores optimized bytecode + metadata (version, opt level, hash). Wrong cache → reassemble.
+`.pegc` cache stores version, opt level, source hash, and bytecode. Mismatch forces rebuild.
 
 ---
 
 ## Español
 
 ```text
-fuente .ir
-   → load_source (+ expansión include)
-   → assemble (2 pasadas: labs, emisión)
-   → optimize (según nivel; cada pasada puede revertirse)
-   → verify_bytecode
-   → intérprete  O  asm/nativo (subconjunto)
+load_source
+  → expandir include
+  → assemble pasada1 (labs, consts)
+  → assemble pasada2 (emitir ops)
+  → optimize (opcional)
+  → verify_bytecode
+  → run | dis | asm | build
 ```
 
-Caché `.pegc`: bytecode optimizado + metadatos. Caché incorrecta → reensamblar.
+La caché `.pegc` guarda versión, nivel de opt, hash y bytecode. Si no coincide, se regenera.

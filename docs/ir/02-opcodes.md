@@ -1,71 +1,123 @@
-# Opcode reference / Referencia de opcodes
+# Opcodes (detailed) / Opcodes (detallado)
 
 ## English
 
-### Stack ops
-`push` `pop` `dup` `swap` `over` `rot`
+### Stack effect notation
+- `(a b -- c)` means: pop b, pop a, push c  
+- `(x --)` means: pop x  
+- `( -- x)` means: push x  
 
-### Arithmetic / bitwise
-`add` `sub` `mul` `div` `mod` `neg` `not` `and` `or` `xor` `shl` `shr`
+### Core arithmetic
+| Op | Effect | Notes |
+|----|--------|-------|
+| add | (a b -- a+b) | |
+| sub | (a b -- a-b) | a then b on stack: careful order |
+| mul | (a b -- a*b) | |
+| div | (a b -- a/b) | runtime error on /0 |
+| mod | (a b -- a%b) | |
+| neg | (a -- -a) | |
 
-### Compare (push 0/1)
-`eq` `ne` `lt` `le` `gt` `ge`
+Example subtraction order:
+
+```text
+push 10
+push 3
+sub
+print      ; 7   because 10-3
+```
 
 ### Locals
-`load S` `store S` — S in `0..LOCAL_MAX-1`
+| Op | Effect |
+|----|--------|
+| load S | ( -- locals[S] ) |
+| store S | ( v -- ) locals[S]=v |
+
+S must satisfy `0 <= S < LOCAL_MAX` (131072).
 
 ### Control
-`jmp` `jz` `jnz` `call` `ret` `halt`/`end`
+| Op | Effect |
+|----|--------|
+| jmp L | IP = L |
+| jz L | (c --) jump if c==0 |
+| jnz L | (c --) jump if c!=0 |
+| call L | push return IP; IP=L |
+| ret | pop return IP |
+| halt/end | stop |
 
-### Specialized (optimizer may emit)
-`iadd_ll` `imul_ll` `isub_ll` `inc_l` `dec_l` `iadd_ln` `sub_ln` `mul_ln` `div_ln`  
-`jle_ln` `jgt_ln` `jlt_ln` `jge_ln` `jz_l` `jnz_l`
+### Strings
+| Op | Effect |
+|----|--------|
+| pushs "t" | ( -- id ) |
+| prints | ( id -- ) |
+| strlen | ( id -- n ) |
+| strcat | ( id1 id2 -- id3 ) |
+| itoa | ( n -- id ) |
+| atoi | ( id -- n ) |
 
-### Strings / IO
-`pushs` `prints` `strlen` `strcat` `strcmp` `slice`  
-`input` `inputn` `print` `dump`
+### Host
+| Op | Effect |
+|----|--------|
+| exec | ( id -- exitcode ) runs shell command string |
 
-### Files / host
-`fopen "path"` `freadln` `fwrite` `fclose` `exec`
-
-### Convert
-`itoa` `atoi`
-
-### Arrays / assert
-`newarr N` `aload` `astore` `assert "msg"`
+Optimizer may **replace** sequences with specialized ops (`inc_l`, `jle_ln`, …). Source programs usually write the portable form.
 
 ---
 
 ## Español
 
-### Pila
-`push` `pop` `dup` `swap` `over` `rot`
+### Notación de efecto de pila
+- `(a b -- c)` : pop b, pop a, push c  
+- `(x --)` : pop x  
+- `( -- x)` : push x  
 
-### Aritmética / bits
-`add` `sub` `mul` `div` `mod` `neg` `not` `and` `or` `xor` `shl` `shr`
+### Aritmética básica
+| Op | Efecto | Notas |
+|----|--------|-------|
+| add | (a b -- a+b) | |
+| sub | (a b -- a-b) | cuidado con el orden |
+| mul | (a b -- a*b) | |
+| div | (a b -- a/b) | error si /0 |
+| mod | (a b -- a%b) | |
+| neg | (a -- -a) | |
 
-### Comparación (deja 0/1)
-`eq` `ne` `lt` `le` `gt` `ge`
+```text
+push 10
+push 3
+sub
+print      ; 7   porque 10-3
+```
 
 ### Locales
-`load S` `store S` — S en `0..LOCAL_MAX-1`
+| Op | Efecto |
+|----|--------|
+| load S | ( -- locals[S] ) |
+| store S | ( v -- ) locals[S]=v |
+
+`0 <= S < LOCAL_MAX` (131072).
 
 ### Control
-`jmp` `jz` `jnz` `call` `ret` `halt`/`end`
+| Op | Efecto |
+|----|--------|
+| jmp L | IP = L |
+| jz L | (c --) salta si c==0 |
+| jnz L | (c --) salta si c!=0 |
+| call L | apila IP retorno; IP=L |
+| ret | saca IP retorno |
+| halt/end | termina |
 
-### Especializados (el optimizador puede emitirlos)
-`iadd_ll` `imul_ll` `isub_ll` `inc_l` `dec_l` `iadd_ln` `sub_ln` `mul_ln` `div_ln`  
-`jle_ln` `jgt_ln` `jlt_ln` `jge_ln` `jz_l` `jnz_l`
+### Strings
+| Op | Efecto |
+|----|--------|
+| pushs "t" | ( -- id ) |
+| prints | ( id -- ) |
+| strlen | ( id -- n ) |
+| strcat | ( id1 id2 -- id3 ) |
+| itoa | ( n -- id ) |
+| atoi | ( id -- n ) |
 
-### Strings / IO
-`pushs` `prints` `strlen` `strcat` `strcmp` `slice`  
-`input` `inputn` `print` `dump`
+### Host
+| Op | Efecto |
+|----|--------|
+| exec | ( id -- código ) ejecuta comando del shell |
 
-### Archivos / host
-`fopen "path"` `freadln` `fwrite` `fclose` `exec`
-
-### Conversión
-`itoa` `atoi`
-
-### Arrays / assert
-`newarr N` `aload` `astore` `assert "msg"`
+El optimizador puede **sustituir** secuencias por ops especializadas (`inc_l`, `jle_ln`, …). En fuente suele escribirse la forma portable.

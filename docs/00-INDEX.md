@@ -2,54 +2,74 @@
 
 ## English
 
-| Document | Topic |
-|----------|--------|
-| [01-overview](01-overview.md) | What Pegassus is |
-| [architecture/01-vm](architecture/01-vm.md) | VM model |
-| [architecture/02-memory](architecture/02-memory.md) | Stack & locals 1 MiB |
-| [architecture/03-pipeline](architecture/03-pipeline.md) | Load → assemble → optimize → run |
-| [ir/01-syntax](ir/01-syntax.md) | IR syntax |
-| [ir/02-opcodes](ir/02-opcodes.md) | Opcode reference |
-| [ir/03-control](ir/03-control.md) | Labels, jumps, call/ret |
-| [ir/04-strings-files](ir/04-strings-files.md) | Strings, files, exec, itoa/atoi |
-| [vm/01-runtime](vm/01-runtime.md) | Interpreter |
-| [vm/02-errors](vm/02-errors.md) | Error system |
-| [optimizer/01-levels](optimizer/01-levels.md) | O0–bare |
-| [optimizer/02-passes](optimizer/02-passes.md) | Passes & safety |
-| [libs/01-abi](libs/01-abi.md) | **Library ABI** |
-| [libs/02-pegstd](libs/02-pegstd.md) | Pegstd |
-| [libs/03-include](libs/03-include.md) | include |
-| [cli/01-commands](cli/01-commands.md) | CLI |
-| [native/01-pegbin](native/01-pegbin.md) | Native subset |
-| [build/01-from-source](build/01-from-source.md) | Build |
-| [faq/01-faq](faq/01-faq.md) | FAQ |
+This index is the map of the Pegassus documentation set. Every page is written twice: **English** and **Español**, with the **same technical content** (examples, limits, ABI numbers, command names).
 
-Pegassus **1.9.12**. Logo: `assets/pegassus-logo.png`.
+### How to read this set
+1. Start with **Overview** if you are new.
+2. Read **Memory** before writing large programs (stack and locals are each 1 MiB).
+3. Read **Library ABI** before shipping any `.ir` library.
+4. Use **CLI** as a daily cheat sheet.
+5. Use **FAQ** when something “mysterious” happens (include order, opts, native subset).
+
+### Document list
+| Path | What you learn |
+|------|----------------|
+| `01-overview.md` | Product definition, goals, non-goals |
+| `architecture/01-vm.md` | Stack machine, registers of the runtime |
+| `architecture/02-memory.md` | 1 MiB stack + 1 MiB locals, math, examples |
+| `architecture/03-pipeline.md` | From `.ir` to execution, cache |
+| `ir/01-syntax.md` | Full syntax with annotated examples |
+| `ir/02-opcodes.md` | Opcode catalog with stack effects |
+| `ir/03-control.md` | Labels, jumps, call/ret patterns |
+| `ir/04-strings-files.md` | Strings, files, exec, itoa/atoi |
+| `vm/01-runtime.md` | Interpreter loop, gas, underflow |
+| `vm/02-errors.md` | Assembler vs runtime errors, reading messages |
+| `optimizer/01-levels.md` | O0–bare with before/after IR |
+| `optimizer/02-passes.md` | Each pass, safety rollback |
+| `libs/01-abi.md` | **Canonical library ABI** with examples |
+| `libs/02-pegstd.md` | Using pegstd |
+| `libs/03-include.md` | include resolution and pitfalls |
+| `cli/01-commands.md` | Every command and flag |
+| `native/01-pegbin.md` | What native can and cannot do |
+| `build/01-from-source.md` | Altair build, Windows/Linux |
+| `faq/01-faq.md` | Long FAQ |
+
+Version documented: **Pegassus 1.9.12**. Logo: `assets/pegassus-logo.png`.
 
 ---
 
 ## Español
 
-| Documento | Tema |
-|-----------|------|
-| [01-overview](01-overview.md) | Qué es Pegassus |
-| [architecture/01-vm](architecture/01-vm.md) | Modelo de VM |
-| [architecture/02-memory](architecture/02-memory.md) | Pila y locales 1 MiB |
-| [architecture/03-pipeline](architecture/03-pipeline.md) | Carga → ensamblado → optimización → ejecución |
-| [ir/01-syntax](ir/01-syntax.md) | Sintaxis IR |
-| [ir/02-opcodes](ir/02-opcodes.md) | Referencia de opcodes |
-| [ir/03-control](ir/03-control.md) | Etiquetas, saltos, call/ret |
-| [ir/04-strings-files](ir/04-strings-files.md) | Strings, archivos, exec, itoa/atoi |
-| [vm/01-runtime](vm/01-runtime.md) | Intérprete |
-| [vm/02-errors](vm/02-errors.md) | Sistema de errores |
-| [optimizer/01-levels](optimizer/01-levels.md) | O0–bare |
-| [optimizer/02-passes](optimizer/02-passes.md) | Pasadas y seguridad |
-| [libs/01-abi](libs/01-abi.md) | **ABI de librerías** |
-| [libs/02-pegstd](libs/02-pegstd.md) | Pegstd |
-| [libs/03-include](libs/03-include.md) | include |
-| [cli/01-commands](cli/01-commands.md) | CLI |
-| [native/01-pegbin](native/01-pegbin.md) | Subconjunto nativo |
-| [build/01-from-source](build/01-from-source.md) | Compilar |
-| [faq/01-faq](faq/01-faq.md) | FAQ |
+Este índice es el mapa de la documentación de Pegassus. Cada página está escrita dos veces: **English** y **Español**, con el **mismo contenido técnico** (ejemplos, límites, números de ABI, nombres de comandos).
 
-Pegassus **1.9.12**. Logo: `assets/pegassus-logo.png`.
+### Cómo leer este conjunto
+1. Empieza por **Overview** si eres nuevo.
+2. Lee **Memory** antes de programas grandes (pila y locales: 1 MiB cada uno).
+3. Lee **ABI de librerías** antes de publicar cualquier lib `.ir`.
+4. Usa **CLI** como chuleta diaria.
+5. Usa **FAQ** cuando algo “raro” pase (orden del include, opts, nativo).
+
+### Lista de documentos
+| Ruta | Qué aprendes |
+|------|----------------|
+| `01-overview.md` | Definición del producto, metas y no-metas |
+| `architecture/01-vm.md` | Máquina de pila, runtime |
+| `architecture/02-memory.md` | 1 MiB pila + 1 MiB locales, cuentas, ejemplos |
+| `architecture/03-pipeline.md` | Del `.ir` a la ejecución, caché |
+| `ir/01-syntax.md` | Sintaxis completa con ejemplos comentados |
+| `ir/02-opcodes.md` | Catálogo de opcodes y efecto en pila |
+| `ir/03-control.md` | Labels, saltos, patrones call/ret |
+| `ir/04-strings-files.md` | Strings, archivos, exec, itoa/atoi |
+| `vm/01-runtime.md` | Bucle del intérprete, gas, underflow |
+| `vm/02-errors.md` | Errores de ensamblado vs runtime |
+| `optimizer/01-levels.md` | O0–bare con IR antes/después |
+| `optimizer/02-passes.md` | Cada pasada y rollback |
+| `libs/01-abi.md` | **ABI canónica de librerías** con ejemplos |
+| `libs/02-pegstd.md` | Uso de pegstd |
+| `libs/03-include.md` | Resolución de include y trampas |
+| `cli/01-commands.md` | Todos los comandos y flags |
+| `native/01-pegbin.md` | Qué puede y no puede el nativo |
+| `build/01-from-source.md` | Build con Altair, Windows/Linux |
+| `faq/01-faq.md` | FAQ larga |
+
+Versión documentada: **Pegassus 1.9.12**. Logo: `assets/pegassus-logo.png`.
