@@ -1,89 +1,68 @@
-# CLI (detailed) / CLI (detallada)
+# CLI reference (long) / Referencia CLI (larga)
 
 ## English
 
-### Run
+### Invocation patterns
 ```text
-pegassus run prog.ir
-pegassus prog.ir
-pegassus --medium run prog.ir
-pegassus --aggressive run prog.ir
-pegassus --bare run prog.ir
-pegassus --steps 1000000 run prog.ir
+pegassus <file.ir>                 ; implicit run
+pegassus run <file.ir>
+pegassus [opt flags] run <file.ir>
 ```
 
-### Inspect
+### Optimization flags
 ```text
-pegassus check prog.ir     # assemble + optimize, do not run
-pegassus dis prog.ir       # show bytecode
-pegassus trace prog.ir     # run with per-op log
-pegassus opt prog.ir       # dump optimized IR view
+--medium / -O1
+--aggressive / -O2
+--bare / -O3
+--steps N
 ```
 
-### Format / REPL / tests
+### Inspection
+| Command | Action |
+|---------|--------|
+| check | assemble+optimize, no run |
+| dis | disassemble bytecode |
+| trace | run with op log |
+| opt | show optimized IR view |
+| fmt | rewrite formatting |
+
+### Tests
+| Command | Action |
+|---------|--------|
+| test file.ir | compare with file.expected |
+| testsuite | built-in suite across O0..bare |
+
+### Native
 ```text
-pegassus fmt prog.ir
-pegassus repl
-pegassus test prog.ir      # needs prog.expected
-pegassus testsuite         # built-in golden tests O0..bare
+--linux | --windows | --macos
+asm | build | native
 ```
 
-### Native / asm
-```text
-pegassus --linux asm prog.ir
-pegassus --windows build prog.ir
-```
-Remember: native is a **subset**. Full semantics = interpreter.
-
-### Help
-```text
-pegassus help
-pegassus cmds
-pegassus examples
-pegassus version
-```
+### Meta
+`help` `cmds` `examples` `version` `repl` `clean`
 
 ---
 
 ## Español
 
-### Ejecutar
+### Invocación
 ```text
-pegassus run prog.ir
-pegassus prog.ir
-pegassus --medium run prog.ir
-pegassus --aggressive run prog.ir
-pegassus --bare run prog.ir
-pegassus --steps 1000000 run prog.ir
+pegassus <file.ir>
+pegassus run <file.ir>
+pegassus [opts] run <file.ir>
 ```
 
-### Inspeccionar
-```text
-pegassus check prog.ir
-pegassus dis prog.ir
-pegassus trace prog.ir
-pegassus opt prog.ir
-```
+### Flags de optimización
+`--medium` `-O1` `--aggressive` `-O2` `--bare` `-O3` `--steps N`
 
-### Formato / REPL / tests
-```text
-pegassus fmt prog.ir
-pegassus repl
-pegassus test prog.ir
-pegassus testsuite
-```
+### Inspección
+check, dis, trace, opt, fmt
 
-### Nativo / asm
-```text
-pegassus --linux asm prog.ir
-pegassus --windows build prog.ir
-```
-Nativo = **subconjunto**. Semántica completa = intérprete.
+### Tests
+test, testsuite
 
-### Ayuda
-```text
-pegassus help
-pegassus cmds
-pegassus examples
-pegassus version
-```
+### Nativo
+`--linux` `--windows` `--macos` + asm/build/native
+
+### Meta
+help, cmds, examples, version, repl, clean

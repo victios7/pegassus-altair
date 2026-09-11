@@ -1,0 +1,33 @@
+; pegtest 1.0 — tiny test helpers
+; ABI: 240=actual, 241=expected for eq tests; uses assert
+; prefix: test_
+
+lab test_eq
+  load 240
+  load 241
+  eq
+  assert "test_eq failed"
+  push 1
+  ret
+
+lab test_neq
+  load 240
+  load 241
+  ne
+  assert "test_neq failed"
+  push 1
+  ret
+
+lab test_true
+  load 240
+  assert "test_true failed"
+  push 1
+  ret
+
+lab test_false
+  load 240
+  push 0
+  eq
+  assert "test_false failed"
+  push 1
+  ret

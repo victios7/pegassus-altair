@@ -26,6 +26,7 @@ This index is the map of the Pegassus documentation set. Every page is written t
 | `vm/02-errors.md` | Assembler vs runtime errors, reading messages |
 | `optimizer/01-levels.md` | O0–bare with before/after IR |
 | `optimizer/02-passes.md` | Each pass, safety rollback |
+| `libs/00-catalog.md` | **All libraries** (pegmath, pegstr, pegbits, …) |
 | `libs/01-abi.md` | **Canonical library ABI** with examples |
 | `libs/02-pegstd.md` | Using pegstd |
 | `libs/03-include.md` | include resolution and pitfalls |
@@ -64,6 +65,7 @@ Este índice es el mapa de la documentación de Pegassus. Cada página está esc
 | `vm/02-errors.md` | Errores de ensamblado vs runtime |
 | `optimizer/01-levels.md` | O0–bare con IR antes/después |
 | `optimizer/02-passes.md` | Cada pasada y rollback |
+| `libs/00-catalog.md` | **Todas las librerías** (pegmath, pegstr, pegbits, …) |
 | `libs/01-abi.md` | **ABI canónica de librerías** con ejemplos |
 | `libs/02-pegstd.md` | Uso de pegstd |
 | `libs/03-include.md` | Resolución de include y trampas |

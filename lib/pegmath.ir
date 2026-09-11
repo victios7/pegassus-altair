@@ -1,0 +1,194 @@
+; pegmath 1.0 — pure IR math helpers
+; ABI: args 240+, temps 250-255, result on stack unless noted
+; prefix: math_
+
+lab math_abs
+  load 240
+  push 0
+  lt
+  jz math_abs_pos
+  load 240
+  neg
+  ret
+lab math_abs_pos
+  load 240
+  ret
+
+lab math_min
+  load 240
+  load 241
+  lt
+  jz math_min_b
+  load 240
+  ret
+lab math_min_b
+  load 241
+  ret
+
+lab math_max
+  load 240
+  load 241
+  gt
+  jz math_max_b
+  load 240
+  ret
+lab math_max_b
+  load 241
+  ret
+
+lab math_clamp
+  ; 240=x 241=lo 242=hi → clamp
+  load 240
+  store 250
+  load 250
+  load 241
+  lt
+  jz math_clamp_hi
+  load 241
+  ret
+lab math_clamp_hi
+  load 250
+  load 242
+  gt
+  jz math_clamp_ok
+  load 242
+  ret
+lab math_clamp_ok
+  load 250
+  ret
+
+lab math_sign
+  load 240
+  push 0
+  lt
+  jz math_sign_pos
+  push 0
+  push 1
+  sub
+  ret
+lab math_sign_pos
+  load 240
+  push 0
+  gt
+  jz math_sign_z
+  push 1
+  ret
+lab math_sign_z
+  push 0
+  ret
+
+lab math_pow
+  ; 240^241 integer, 241>=0
+  push 1
+  store 250
+  load 241
+  store 251
+lab math_pow_loop
+  load 251
+  push 0
+  le
+  jnz math_pow_done
+  load 250
+  load 240
+  mul
+  store 250
+  load 251
+  push 1
+  sub
+  store 251
+  jmp math_pow_loop
+lab math_pow_done
+  load 250
+  ret
+
+lab math_fact
+  push 1
+  store 250
+  load 240
+  store 251
+lab math_fact_loop
+  load 251
+  push 1
+  le
+  jnz math_fact_done
+  load 250
+  load 251
+  mul
+  store 250
+  load 251
+  push 1
+  sub
+  store 251
+  jmp math_fact_loop
+lab math_fact_done
+  load 250
+  ret
+
+lab math_gcd
+  load 240
+  store 250
+  load 241
+  store 251
+lab math_gcd_loop
+  load 251
+  push 0
+  eq
+  jnz math_gcd_done
+  load 250
+  load 251
+  mod
+  store 252
+  load 251
+  store 250
+  load 252
+  store 251
+  jmp math_gcd_loop
+lab math_gcd_done
+  load 250
+  ret
+
+lab math_isqrt
+  ; integer sqrt floor of 240
+  load 240
+  push 0
+  le
+  jz math_isqrt_go
+  push 0
+  ret
+lab math_isqrt_go
+  push 0
+  store 250
+  load 240
+  store 251
+lab math_isqrt_loop
+  load 250
+  load 251
+  add
+  push 2
+  div
+  store 252
+  load 252
+  load 252
+  mul
+  load 240
+  gt
+  jz math_isqrt_ok
+  load 252
+  push 1
+  sub
+  store 251
+  jmp math_isqrt_cont
+lab math_isqrt_ok
+  load 252
+  store 250
+  load 252
+  push 1
+  add
+  store 251
+lab math_isqrt_cont
+  load 250
+  load 251
+  gt
+  jz math_isqrt_loop
+  load 250
+  ret

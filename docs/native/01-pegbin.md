@@ -1,19 +1,52 @@
-# Native pegbin / Nativo pegbin
+# Native pegbin (long) / Nativo pegbin (largo)
 
 ## English
 
-`engine/pegbin.c` builds ELF/PE/Mach-O from a numeric bytecode dump.
+### Purpose
+`engine/pegbin.c` turns a numeric dump of bytecode into a crude native binary (ELF / PE / Mach-O containers). It exists for experiments and tiny numeric kernels.
 
-**Subset only**: push/pop/dup, arith, compares, load/store, jmp/jz/jnz, inc_l/dec_l, print (Linux write), halt.
+### Supported ideas (subset)
+- push/pop/dup  
+- add/sub/mul/neg  
+- compares  
+- load/store to a locals area  
+- jmp / jz / jnz with relative patches  
+- inc_l / dec_l  
+- print on Linux via `write`  
+- halt  
 
-Full language semantics = **VM**. Document this to users: native is for tight numeric kernels, not full IR.
+### Not supported (use the VM)
+- full string pool semantics  
+- fopen family  
+- exec  
+- assert messages  
+- every specialized opcode  
+
+### Honest messaging
+Always tell users: **native ≠ complete Pegassus**. If a program uses strings or libs heavily, run it on the interpreter.
+
+### Build
+```text
+cc -O2 -o pegbin engine/pegbin.c
+```
 
 ---
 
 ## Español
 
-`engine/pegbin.c` genera ELF/PE/Mach-O desde un volcado numérico de bytecode.
+### Propósito
+`engine/pegbin.c` convierte un volcado numérico de bytecode en un binario nativo tosco (ELF/PE/Mach-O). Para experimentos y núcleos numéricos.
 
-**Solo subconjunto**: pila, aritmética, comparaciones, load/store, saltos, inc_l/dec_l, print (Linux), halt.
+### Soportado (subconjunto)
+pila, aritmética, comparaciones, load/store, saltos, inc_l/dec_l, print en Linux, halt.
 
-Semántica completa = **VM**. El nativo es para núcleos numéricos, no todo el IR.
+### No soportado (usa la VM)
+strings completas, ficheros, exec, asserts, todos los opcodes especiales.
+
+### Mensaje honesto
+**nativo ≠ Pegassus completo**.
+
+### Build
+```text
+cc -O2 -o pegbin engine/pegbin.c
+```

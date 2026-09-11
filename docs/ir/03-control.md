@@ -1,43 +1,94 @@
-# Control flow / Control de flujo
+# Control flow (long) / Control de flujo (largo)
 
 ## English
 
 ### Labels
-`lab name` — unique names (hash table with name equality, LAB_MAX entries).
+```text
+lab name
+```
+Creates a target for `jmp` / `jz` / `jnz` / `call`. Names must be unique across the whole program after includes.
 
-### Jumps
-- `jmp L` unconditional  
-- `jz L` pop; jump if zero  
-- `jnz L` pop; jump if nonzero  
+### Unconditional jump
+```text
+jmp end
+  push 1
+  print
+lab end
+  push 2
+  print
+```
+Only `2` prints.
 
-### Call / ret
-- `call L` pushes return address, jumps to L  
-- `ret` returns  
+### Conditional jumps
+```text
+push 0
+jz zero
+pushs "nonzero"
+prints
+jmp done
+lab zero
+pushs "zero"
+prints
+lab done
+end
+```
 
-Arguments are **not** a separate stack: use **locals ABI** (see libs/01-abi).  
-Return values: leave them on the operand stack for the caller.
+`jz` / `jnz` **pop** the condition value.
 
-### Tail-call (optimizer)
-`call X` + `ret` may become `jmp X` under optimization.
+### call and ret
+```text
+push 5
+call square
+print
+end
+
+lab square
+  ; expects nothing on stack; uses ABI slots instead ideally
+  ; stack style:
+  dup
+  mul
+  ret
+```
+
+For libraries prefer **slots 240+** (see ABI) so nested calls do not fight over stack order.
+
+### Nested calls
+Limited by `CALL_MAX` (2048). Each `call` pushes return IP; `ret` pops it.
+
+### Optimizer interactions
+- Jump threading may shorten `jmp L1` → `jmp L2` chains.
+- Tail call may turn `call X; ret` into `jmp X`.
 
 ---
 
 ## Español
 
-### Etiquetas
-`lab name` — nombres únicos (tabla con igualdad de nombre, LAB_MAX).
+### Labels
+```text
+lab name
+```
+Destino de saltos/calls. Únicas en todo el programa tras includes.
 
-### Saltos
-- `jmp L` incondicional  
-- `jz L` pop; salta si cero  
-- `jnz L` pop; salta si no cero  
+### Salto incondicional
+```text
+jmp end
+  push 1
+  print
+lab end
+  push 2
+  print
+```
+Solo imprime `2`.
 
-### Call / ret
-- `call L` apila retorno y salta  
-- `ret` vuelve  
+### Saltos condicionales
+`jz` / `jnz` **hacen pop** de la condición.
 
-Los argumentos **no** van en otra pila: usa **ABI de locales**.  
-Valores de retorno: déjalos en la pila de operandos.
+### call y ret
+Para librerías prefiere **slots 240+** (ABI) para no pelear por el orden de la pila.
 
-### Tail-call (optimizador)
-`call X` + `ret` puede pasar a `jmp X`.
+### Calls anidados
+Límite `CALL_MAX` (2048).
+
+### Optimizador
+- Jump threading acorta cadenas de `jmp`.
+- Tail call: `call X; ret` → `jmp X`.

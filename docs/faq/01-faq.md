@@ -3,59 +3,79 @@
 ## English
 
 ### Why does my included library run by itself?
-Because `include` pastes code into the program. Without `jmp main` first, execution starts at the first instruction of the lib.
+`include` pastes code. If the first executed instruction is inside the library, it runs. Fix:
 
-### Why does O2/bare change results?
-It should not. If it does, that is a bug. Run `testsuite`. 1.9.12 rolls back bad passes; please report remaining mismatches with a minimal `.ir`.
+```text
+jmp main
+include pegmath.ir
+lab main
+  ...
+```
 
-### How big is the stack?
-131072 entries, **1 MiB dedicated**.
+### How many libraries ship in this repo?
+| File | Prefix |
+|------|--------|
+| pegstd.ir | std_ |
+| pegmath.ir | math_ |
+| pegstr.ir | str_ |
+| pegbits.ir | bit_ |
+| pegtest.ir | test_ |
+| pegutil.ir | util_ |
 
-### How many locals?
-131072 slots (`0..131071`), **1 MiB dedicated**.
+See `docs/libs/00-catalog.md`.
 
-### Can I use slot 0 in a library?
-You can, but you should not: applications use low slots. Prefer 240+.
+### How big is the stack / locals?
+Each has **its own 1 MiB**. That is **131072** stack cells and **131072** local slots (`1048576 / 8`).
 
-### Does `exec` work offline?
-It runs host commands; sandboxed or locked-down environments may block it.
+### Where do library arguments go?
+Slots **240–249** by convention. Temps **250–255**. Details: `docs/libs/01-abi.md`.
 
-### Is pegbin equal to the VM?
-No. Documented subset only.
+### Why do optimizers sometimes log “pasada rechazada”?
+A transform failed verification and was **rolled back**. The optimization level stays on; only that pass is skipped.
 
-### How do I ship a language on top of Pegassus?
-1. Write a frontend → emit `.ir`  
-2. Ship `pegassus` binary  
-3. Optionally ship `lib/*.ir`  
-4. Document your ABI extensions if any
+### Can I use pegbin for programs with strings and pegstr?
+Not reliably. pegbin is a **subset**. Use the VM.
+
+### Does `atoi` accept spaces?
+Yes: leading spaces, optional sign, then digits; stops at first non-digit.
+
+### How do I write my own library?
+1. Prefix labels (`mylib_`)  
+2. Use ABI slots 240+  
+3. Document stack in/out  
+4. Ship a demo under `examples/`  
+5. Add a section to `docs/libs/00-catalog.md`  
+
+### testsuite fails on my machine
+Ensure you run the 1.9.12 binary built from `src/pegassus.at`. Delete stale `.pegc` caches if needed (`pegassus clean` if available, or delete `*.pegc`).
 
 ---
 
 ## Español
 
-### ¿Por qué mi lib se ejecuta sola?
-`include` pega código en el programa. Sin `jmp main` al inicio, se ejecuta la lib.
+### ¿Por qué se ejecuta sola mi lib?
+`include` pega código. Solución: `jmp main` antes del include.
 
-### ¿Por qué O2/bare cambia resultados?
-No debería. Si pasa, es bug. Ejecuta `testsuite`. 1.9.12 revierte pasadas malas; reporta con un `.ir` mínimo.
+### ¿Cuántas libs trae el repo?
+pegstd, pegmath, pegstr, pegbits, pegtest, pegutil. Ver `docs/libs/00-catalog.md`.
 
-### ¿De qué tamaño es la pila?
-131072 entradas, **1 MiB dedicado**.
+### ¿Tamaño de pila / locales?
+**1 MiB cada uno** → **131072** celdas / slots.
 
-### ¿Cuántos locales?
-131072 slots (`0..131071`), **1 MiB dedicado**.
+### ¿Dónde van los argumentos de lib?
+Slots **240–249**. Temps **250–255**. Ver ABI.
 
-### ¿Puedo usar el slot 0 en una lib?
-Puedes, pero no debes: las apps usan los bajos. Prefiere 240+.
+### ¿Qué significa “pasada rechazada”?
+Esa transform se **revirtió**; el nivel de opt sigue activo.
 
-### ¿`exec` funciona offline?
-Ejecuta comandos del host; entornos restringidos pueden bloquearlo.
+### ¿pegbin con strings/pegstr?
+No de forma fiable. Usa la VM.
 
-### ¿pegbin es igual que la VM?
-No. Solo un subconjunto documentado.
+### ¿`atoi` acepta espacios?
+Sí.
 
-### ¿Cómo publico un lenguaje encima de Pegassus?
-1. Frontend → emite `.ir`  
-2. Distribuye el binario `pegassus`  
-3. Opcional: `lib/*.ir`  
-4. Documenta extensiones de ABI
+### ¿Cómo hago mi propia lib?
+Prefijos, ABI 240+, documentar, demo, catálogo.
+
+### testsuite falla
+Binario 1.9.12 desde `src/pegassus.at`; limpia cachés `.pegc`.

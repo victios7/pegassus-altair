@@ -1,0 +1,39 @@
+; pegstr 1.0 — string helpers (uses VM strcat/strlen/strcmp/itoa/atoi)
+; ABI: 240=primary string id or number; 241=second; result on stack
+; prefix: str_
+
+lab str_len
+  load 240
+  strlen
+  ret
+
+lab str_eq
+  load 240
+  load 241
+  strcmp
+  push 0
+  eq
+  ret
+
+lab str_cat
+  load 240
+  load 241
+  strcat
+  ret
+
+lab str_from_int
+  load 240
+  itoa
+  ret
+
+lab str_to_int
+  load 240
+  atoi
+  ret
+
+lab str_empty
+  load 240
+  strlen
+  push 0
+  eq
+  ret

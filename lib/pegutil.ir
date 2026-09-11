@@ -1,0 +1,39 @@
+; pegutil 1.0 — small utilities
+; prefix: util_
+
+lab util_swap_slots
+  ; swap locals 240 and 241
+  load 240
+  store 250
+  load 241
+  store 240
+  load 250
+  store 241
+  push 0
+  ret
+
+lab util_clear3
+  push 0
+  store 240
+  push 0
+  store 241
+  push 0
+  store 242
+  push 0
+  ret
+
+lab util_id
+  load 240
+  ret
+
+lab util_inc
+  load 240
+  push 1
+  add
+  ret
+
+lab util_dec
+  load 240
+  push 1
+  sub
+  ret

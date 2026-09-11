@@ -1,0 +1,72 @@
+; pegbits 1.0 — bitwise helpers
+; ABI: 240, 241 inputs; result on stack
+; prefix: bit_
+
+lab bit_and
+  load 240
+  load 241
+  and
+  ret
+
+lab bit_or
+  load 240
+  load 241
+  or
+  ret
+
+lab bit_xor
+  load 240
+  load 241
+  xor
+  ret
+
+lab bit_not
+  load 240
+  not
+  ret
+
+lab bit_shl
+  load 240
+  load 241
+  shl
+  ret
+
+lab bit_shr
+  load 240
+  load 241
+  shr
+  ret
+
+lab bit_popcnt
+  load 240
+  store 250
+  push 0
+  store 251
+lab bit_pop_loop
+  load 250
+  push 0
+  eq
+  jnz bit_pop_done
+  load 250
+  push 1
+  and
+  load 251
+  add
+  store 251
+  load 250
+  push 1
+  shr
+  store 250
+  jmp bit_pop_loop
+lab bit_pop_done
+  load 251
+  ret
+
+lab bit_test
+  ; bit 241 of value 240 → 0/1
+  load 240
+  load 241
+  shr
+  push 1
+  and
+  ret
